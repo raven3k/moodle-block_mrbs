@@ -17,6 +17,16 @@
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
+require_login();
+
+if ($CFG->version < 2011120100) {
+    $context = get_context_instance(CONTEXT_SYSTEM);
+} else {
+    $context = context_system::instance();
+}
+
+$PAGE->set_context($context);
+
 function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
 
     global $USER;
@@ -82,6 +92,7 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
             $class_size = 0;
         }
 
+        /*
         $findroomquery = 'SELECT DISTINCT
                                 r.id,
                                 r.room_name,
@@ -102,10 +113,33 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
                              AND r.capacity >= ?
                              AND (r.description not like ?
                              OR r.id= ?)
-                             ORDER BY sort1 DESC, sort2 DESC';
+                             ORDER BY sort1 DESC, sort2 DESC LIMIT 1';
+        */                     
+        $findroomquery = 'SELECT DISTINCT
+                                r.id,
+                                r.room_name,
+                                a.area_name,
+                                IF (r.description = ?, 1, 0) AS sort1,
+                                IF (a.id = ?, 1, 0) AS sort2
+                             FROM {block_mrbs_room} r
+                             JOIN {block_mrbs_area} a
+                                ON r.area_id = a.id
+                             JOIN {block_mrbs_entry} e
+                                ON r.id= e.room_id
+                             WHERE ( SELECT COUNT(*) FROM {block_mrbs_entry} e2
+                                 WHERE ((e2.start_time >= ? AND e2.end_time < ?)
+                                 OR (e2.start_time < ? AND e2.end_time > ?)
+                                 OR (e2.start_time < ? AND e2.end_time >= ?))
+                                 AND e2.room_id = r.id HAVING COUNT(*) > 1)
+                             AND r.description like ?
+                             AND r.capacity >= ?
+                             AND (r.description not like ?
+                             OR r.id= ?)
+                             ORDER BY sort1 DESC, sort2 DESC LIMIT 1';                             
 
         //dump them in first room on the list
         //            $findroomresult=get_record_sql($findroomquery,true);
+        /*
         $params = array($oldbooking->description,
             $oldbooking->area_id,
             $oldbooking->start_time,
@@ -118,7 +152,21 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
             $class_size,
             '%special%',
             $oldbooking->area_id);
-
+        */
+        // without the "%teaching%" in Description    
+        $params = array($oldbooking->description,
+            $oldbooking->area_id,
+            $oldbooking->start_time,
+            $oldbooking->end_time,
+            $oldbooking->start_time,
+            $oldbooking->start_time,
+            $oldbooking->end_time,
+            $oldbooking->end_time,
+            '%%',
+            $class_size,
+            '%special%',
+            $oldbooking->area_id);            
+            
         $findroomresult = $DB->get_record_sql($findroomquery, $params);
 
         $subject = get_string('bookingmoved', 'block_mrbs');
