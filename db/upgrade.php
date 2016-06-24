@@ -19,10 +19,9 @@ function renameifexists($dbman, $tablename) {
     global $DB, $CFG;
 
     $oldname = $tablename;
-    $newname = $CFG->prefix.$tablename;
+    $newname = $CFG->prefix . $tablename;
 
-    $tbl = $DB->get_records_sql('SELECT table_name FROM information_schema.tables WHERE table_name = ? AND table_schema = ?',
-                                array($oldname, $CFG->dbname));
+    $tbl = $DB->get_records_sql('SELECT table_name FROM information_schema.tables WHERE table_name = ? AND table_schema = ?', array($oldname, $CFG->dbname));
     if (empty($tbl)) {
         // Old table does not exist - nothing to do
         return;
@@ -36,10 +35,10 @@ function renameifexists($dbman, $tablename) {
             // New table exists, but is empty - drop it, then carry on with the rename below
             $dbman->drop_table($newtbl);
         } else {
-            $oldhasdata = $DB->count_records_sql('SELECT COUNT(*) FROM '.$oldname);
+            $oldhasdata = $DB->count_records_sql('SELECT COUNT(*) FROM ' . $oldname);
             if (!$oldhasdata) {
                 // New table has data, old table does not - just drop the old one
-                $DB->execute('DROP TABLE '.$oldname);
+                $DB->execute('DROP TABLE ' . $oldname);
                 return;
             } else {
                 // Both contain data - display error and halt upgrade
@@ -53,14 +52,14 @@ function renameifexists($dbman, $tablename) {
     // I would like to use this function, but it is protected
     //$dbman->execute_sql('ALTER TABLE '.$oldname.' RENAME TO '.$newname);
     // Rename the old table to the new table name
-    $DB->execute('ALTER TABLE '.$oldname.' RENAME TO '.$newname);
+    $DB->execute('ALTER TABLE ' . $oldname . ' RENAME TO ' . $newname);
 }
 
 function block_mrbs_convert_timestamp($tablename, $fieldname) {
     global $DB;
 
     // Check to see if the field is currently of type 'timestamp'.
-    $fielddef = $DB->get_record_sql("SHOW COLUMNS FROM {".$tablename."} LIKE '".$fieldname."'");
+    $fielddef = $DB->get_record_sql("SHOW COLUMNS FROM {" . $tablename . "} LIKE '" . $fieldname . "'");
     if (!$fielddef) {
         die("$fieldname does not exist in table $tablename");
     }
@@ -78,17 +77,17 @@ function block_mrbs_convert_timestamp($tablename, $fieldname) {
         $dbman->add_field($table, $field);
     }
     // Copy & convert the current date from [fieldname] => [fieldname]_conv
-    $DB->execute('UPDATE {'.$tablename.'} SET '.$tempfield.' = UNIX_TIMESTAMP('.$fieldname.')');
+    $DB->execute('UPDATE {' . $tablename . '} SET ' . $tempfield . ' = UNIX_TIMESTAMP(' . $fieldname . ')');
 
     // Rename [fieldname] => [fieldname]_backup + rename [fieldname]_conv => [fieldname]
     $backupfield = "{$fieldname}_backup";
-    $DB->execute('ALTER TABLE {'.$tablename.'} CHANGE '.$fieldname.' '.$backupfield.' TIMESTAMP');
+    $DB->execute('ALTER TABLE {' . $tablename . '} CHANGE ' . $fieldname . ' ' . $backupfield . ' TIMESTAMP');
     $dbman->rename_field($table, $field, $fieldname);
 
     echo "$tablename.$fieldname converted from timestamp to integer (backup data in $tablename.$backupfield)<br/>\n";
 }
 
-function xmldb_block_mrbs_upgrade($oldversion=0) {
+function xmldb_block_mrbs_upgrade($oldversion = 0) {
     global $DB, $CFG;
 
     $dbman = $DB->get_manager();

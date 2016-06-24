@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
 $dayurl = new moodle_url('/blocks/mrbs/web/day.php');
 $PAGE->set_url($dayurl); // Hopefully will never be needed
@@ -27,6 +27,8 @@ if ($CFG->version < 2011120100) {
     $context = context_system::instance();
 }
 
+$PAGE->set_context($context);
+
 if (!has_capability('block/mrbs:editmrbs', $context) && !has_capability('block/mrbs:administermrbs', $context)) {
     redirect($dayurl);
 }
@@ -34,7 +36,7 @@ if (!has_capability('block/mrbs:editmrbs', $context) && !has_capability('block/m
 $touser = required_param('id', PARAM_INT);
 $message = required_param('message', PARAM_TEXT);
 
-$touser = $DB->get_record('user', array('id'=>$touser));
+$touser = $DB->get_record('user', array('id' => $touser));
 
 if (!confirm_sesskey()) {
     print_error('Invalid sesskey');
