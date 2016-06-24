@@ -67,21 +67,11 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
     }
     $sql.=' AND e.room_id = ? ORDER BY e.start_time';
 
-    /*
-      echo "<pre>";
-      var_dump($sql);
-      echo "</pre>";
-      echo "<pre>";
-      var_dump(array($starttime, $endtime, $starttime, $starttime, $endtime, $endtime, $id, $room_id));
-      echo "</pre>";
-     */
-
     if (!empty($id)) {
         $oldbookings = $DB->get_records_sql($sql, array($starttime, $endtime, $starttime, $starttime, $endtime, $endtime, $id, $room_id));
     } else {
         $oldbookings = $DB->get_records_sql($sql, array($starttime, $endtime, $starttime, $starttime, $endtime, $endtime, $room_id));
     }
-
 
     foreach ($oldbookings as $oldbooking) {
 
@@ -104,29 +94,6 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
             $class_size = 0;
         }
 
-        /*
-          $findroomquery = 'SELECT DISTINCT
-          r.id,
-          r.room_name,
-          a.area_name,
-          IF (r.description = ?, 1, 0) AS sort1,
-          IF (a.id = ?, 1, 0) AS sort2
-          FROM {block_mrbs_room} r
-          JOIN {block_mrbs_area} a
-          ON r.area_id = a.id
-          JOIN {block_mrbs_entry} e
-          ON r.id= e.room_id
-          WHERE ( SELECT COUNT(*) FROM {block_mrbs_entry} e2
-          WHERE ((e2.start_time >= ? AND e2.end_time < ?)
-          OR (e2.start_time < ? AND e2.end_time > ?)
-          OR (e2.start_time < ? AND e2.end_time >= ?))
-          AND e2.room_id = r.id ) < 1
-          AND r.description like ?
-          AND r.capacity >= ?
-          AND (r.description not like ?
-          OR r.id= ?)
-          ORDER BY sort1 DESC, sort2 DESC LIMIT 1';
-         */
         $findroomquery = 'SELECT DISTINCT
                                 r.id,
                                 r.room_name,
@@ -147,23 +114,6 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
                              AND r.id = ?
                              ORDER BY sort1 DESC, sort2 DESC LIMIT 1';
 
-        //dump them in first room on the list
-        //            $findroomresult=get_record_sql($findroomquery,true);
-        /*
-          $params = array($oldbooking->description,
-          $oldbooking->area_id,
-          $oldbooking->start_time,
-          $oldbooking->end_time,
-          $oldbooking->start_time,
-          $oldbooking->start_time,
-          $oldbooking->end_time,
-          $oldbooking->end_time,
-          '%teaching%',
-          $class_size,
-          '%special%',
-          $oldbooking->area_id);
-         */
-        // without the "%teaching%" in Description    
         $params = array($oldbooking->description,
             $oldbooking->area_id,
             $oldbooking->start_time,
@@ -177,23 +127,6 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
 
         $findroomresult = $DB->get_record_sql($findroomquery, $params);
 
-        /*
-          echo "<pre>";
-          var_dump($findroomquery);
-          echo "</pre>";
-          echo "<br /><br />";
-          echo "<pre>";
-          var_dump($params);
-          echo "</pre>";
-          echo "<br /><br />";
-          echo "<pre>";
-          var_dump($findroomresult);
-          echo "</pre>";
-         */
-
-
-        /* Workaround - if findroomresult == false */
-        /* TODO! */
         if ($findroomresult == false) {
             $findroomresult = new stdClass();
             $findroomresult->room_name = $oldbooking->room_name;
@@ -203,7 +136,6 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
         } else {
             $findroomresult_check = true;
         }
-        /*         * ** */
 
         $subject = get_string('bookingmoved', 'block_mrbs');
         $langvars = new stdClass;
@@ -235,8 +167,8 @@ function mrbsForceMove($room_id, $starttime, $endtime, $name, $id = null) {
                 $output.= '<br>' . get_string('bookingmoveerror', 'block_mrbs', $langvars);
             } else {
                 $output.= '<br>' . get_string('bookingmoveerrorshort', 'block_mrbs', $langvars);
+                mail($cfg_mrbs->admin_email, get_string('bookingmoveerror', 'block_mrbs'), get_string('bookingmoveerrormessage', 'block_mrbs', $langvars));
             }
-            //mail($cfg_mrbs->admin_email, get_string('bookingmoveerror', 'block_mrbs'), get_string('bookingmoveerrormessage', 'block_mrbs', $langvars));
         }
     }
 
