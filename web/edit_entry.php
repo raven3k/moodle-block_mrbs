@@ -65,7 +65,6 @@ if (!empty($hour)) {
 }
 if (!empty($minute)) {
     $thisurl->param('minute', $minute);
-    ;
 }
 
 $PAGE->set_url($thisurl);
@@ -76,6 +75,9 @@ if (!getAuthorised(1)) {
     exit;
 }
 
+if (!isset($HTTP_REFERER)) {
+    $HTTP_REFERER = $_SERVER['HTTP_REFERER'];
+}
 
 
 // This page will either add or modify a booking
@@ -360,8 +362,8 @@ if (has_capability("block/mrbs:forcebook", $context)) {
 </TR>
 
         <?php if (!$enable_periods) { ?>
-        <TR><TD CLASS=CR><B><?php echo get_string('time') ?></B></TD>
-          <TD CLASS=CL><INPUT NAME="hour" SIZE=2 VALUE="<?php
+                <TR><TD CLASS=CR><B><?php echo get_string('time') ?></B></TD>
+                  <TD CLASS=CL><INPUT NAME="hour" SIZE=2 VALUE="<?php
                     if (!$twentyfourhour_format && ($start_hour > 12)) {
                         echo ($start_hour - 12);
                     } else {
@@ -376,11 +378,11 @@ if (has_capability("block/mrbs:forcebook", $context)) {
                                         echo "<INPUT NAME=\"ampm\" type=\"radio\" value=\"pm\" $checked>" . userdate(mktime(13, 0, 0, 1, 1, 2000), "%p");
                                     }
                                     ?>
-        </TD></TR>
-                <?php } else { ?>
-        <TR><TD CLASS=CR><B><?php echo get_string('period', 'block_mrbs') ?></B></TD>
-          <TD CLASS=CL>
-            <SELECT NAME="period" onChange="updateFreeRooms()">
+                </TD></TR>
+        <?php } else { ?>
+                <TR><TD CLASS=CR><B><?php echo get_string('period', 'block_mrbs') ?></B></TD>
+                  <TD CLASS=CL>
+                    <SELECT NAME="period" onChange="updateFreeRooms()">
                         <?php
                         foreach ($periods as $p_num => $p_val) {
                             echo "<OPTION VALUE=$p_num";
@@ -389,11 +391,11 @@ if (has_capability("block/mrbs:forcebook", $context)) {
                             echo ">$p_val";
                         }
                         ?>
-            </SELECT>
+                    </SELECT>
 
-        </TD></TR>
+                </TD></TR>
 
-                <?php } ?>
+        <?php } ?>
 <TR><TD CLASS=CR><B><?php echo get_string('duration', 'block_mrbs'); ?></B></TD>
   <TD CLASS=CL><INPUT NAME="duration" SIZE=7 VALUE="<?php echo $duration; ?>" onChange="updateFreeRooms()">
     <SELECT NAME="dur_units" onChange="updateFreeRooms()">
@@ -412,10 +414,10 @@ if (has_capability("block/mrbs:forcebook", $context)) {
                     ?>
     </SELECT>
     <INPUT NAME="all_day" TYPE="checkbox" VALUE="yes" id="all_day" <?php if ($all_day) echo 'CHECKED '; ?>onClick="OnAllDayClick()"> <?php
-            echo get_string('all_day', 'block_mrbs');
-            if ($all_day)
-                echo '<body onload = "OnAllDayClick()"></body>';
-            ?>
+                echo get_string('all_day', 'block_mrbs');
+                if ($all_day)
+                    echo '<body onload = "OnAllDayClick()"></body>';
+                ?>
 </TD></TR>
 
 
@@ -428,15 +430,15 @@ if (has_capability("block/mrbs:forcebook", $context)) {
 // to choose areas.
         if (count($areas) > 1) {
             ?>
-        <script language="JavaScript">
+                <script language="JavaScript">
     <!--
 
-            // create area selector if javascript is enabled as this is required
-            // if the room selector is to be updated.
-            this.document.writeln("<tr><td class=CR><b><?php echo get_string('areas', 'block_mrbs') ?>:</b></td><td class=CL valign=top>");
-            this.document.writeln("          <select name=\"areas\" onChange=\"updateFreeRooms()\">");
+                // create area selector if javascript is enabled as this is required
+                // if the room selector is to be updated.
+                this.document.writeln("<tr><td class=CR><b><?php echo get_string('areas', 'block_mrbs') ?>:</b></td><td class=CL valign=top>");
+                this.document.writeln("          <select name=\"areas\" onChange=\"updateFreeRooms()\">");
     <?php
-    // get list of areas
+// get list of areas
 
     foreach ($areas as $dbarea) {
         $selected = "";
@@ -448,13 +450,13 @@ if (has_capability("block/mrbs:forcebook", $context)) {
 
     print "this.document.writeln(\"            <option  value=\\\"IT\\\">" . get_string('computerrooms', 'block_mrbs') . "\")\n";
     ?>
-            this.document.writeln("          </select>");
-            this.document.writeln("</td></tr>");
-            // -->
-                    </script>
-                <?php
-                                } // if $num_areas
-                                ?>
+                this.document.writeln("          </select>");
+                this.document.writeln("</td></tr>");
+                // -->
+                        </script>
+            <?php
+        } // if $num_areas
+        ?>
 <tr><td class=CR><b><?php echo get_string('rooms', 'block_mrbs') ?>:</b></td>
   <td class=CL valign=top><table><tr><td><select name="rooms[]" multiple="yes">
                                 <?php
@@ -524,11 +526,11 @@ if (has_capability("block/mrbs:forcebook", $context)) {
                 ?>
 
 </td></tr>
-            <?php if ($edit_type == "series") { ?>
+        <?php if ($edit_type == "series") { ?>
 
-        <TR>
-         <TD CLASS=CR><B><?php echo get_string('rep_type', 'block_mrbs') ?></B></TD>
-         <TD CLASS=CL>
+                <TR>
+                 <TD CLASS=CR><B><?php echo get_string('rep_type', 'block_mrbs') ?></B></TD>
+                 <TD CLASS=CL>
                     <?php
                     for ($i = 0; $i < 7; $i++) { //manually setting this to 7 since that is how many repetition types there are -arb quick and dirty hack
                         echo "<INPUT ID=\"radiorepeat" . $i . "\" NAME=\"rep_type\" TYPE=\"RADIO\" VALUE=\"" . $i . "\"";
@@ -539,17 +541,17 @@ if (has_capability("block/mrbs:forcebook", $context)) {
                         echo '><label for="radiorepeat' . $i . '">' . get_string('rep_type_' . $i, 'block_mrbs') . "</label>\n";
                     }
                     ?>
-         </TD>
-        </TR>
+                 </TD>
+                </TR>
 
-        <TR>
-         <TD CLASS=CR><B><?php echo get_string('rep_end_date', 'block_mrbs') ?></B></TD>
-         <TD CLASS=CL><?php genDateSelector("rep_end_", $rep_end_day, $rep_end_month, $rep_end_year) ?></TD>
-        </TR>
+                <TR>
+                 <TD CLASS=CR><B><?php echo get_string('rep_end_date', 'block_mrbs') ?></B></TD>
+                 <TD CLASS=CL><?php genDateSelector("rep_end_", $rep_end_day, $rep_end_month, $rep_end_year) ?></TD>
+                </TR>
 
-        <TR>
-         <TD CLASS=CR><B><?php echo get_string('rep_rep_day', 'block_mrbs') ?></B> <?php echo get_string('rep_for_weekly', 'block_mrbs') ?></TD>
-         <TD CLASS=CL>
+                <TR>
+                 <TD CLASS=CR><B><?php echo get_string('rep_rep_day', 'block_mrbs') ?></B> <?php echo get_string('rep_for_weekly', 'block_mrbs') ?></TD>
+                 <TD CLASS=CL>
                     <?php
 // Display day name checkboxes according to language and preferred weekday start.
                     for ($i = 0; $i < 7; $i++) {
@@ -560,8 +562,8 @@ if (has_capability("block/mrbs:forcebook", $context)) {
                         echo '><label for="chkrepeatday' . $i . '">' . day_name($wday) . "</label>\n";
                     }
                     ?>
-         </TD>
-        </TR>
+                 </TD>
+                </TR>
 
             <?php
         }
@@ -595,26 +597,26 @@ if (has_capability("block/mrbs:forcebook", $context)) {
         if (( ( $id == 0 ) ) Xor ( isset($rep_type) && ( $rep_type != 0 ) && ( "series" == $edit_type ) )) {
             ?>
 
-        <TR>
-         <TD CLASS=CR><B><?php echo get_string('rep_num_weeks', 'block_mrbs') ?></B> <?php echo get_string('rep_for_nweekly', 'block_mrbs') ?></TD>
-         <TD CLASS=CL><INPUT TYPE=TEXT NAME="rep_num_weeks" VALUE="<?php echo $rep_num_weeks ?>">
-        </TR>
+                <TR>
+                 <TD CLASS=CR><B><?php echo get_string('rep_num_weeks', 'block_mrbs') ?></B> <?php echo get_string('rep_for_nweekly', 'block_mrbs') ?></TD>
+                 <TD CLASS=CL><INPUT TYPE=TEXT NAME="rep_num_weeks" VALUE="<?php echo $rep_num_weeks ?>">
+                </TR>
         <?php } ?>
 
-            <?php if ($id != 0) { ?>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-        <td class="CR"><label for="mrbsroomchange"><b><?php print_string('roomchange', 'block_mrbs'); ?></b></td>
-        <td><input type="checkbox" checked="checked" name="roomchange" id="mrbsroomchange" /></td>
-        </tr>
-                <?php } ?>
+        <?php if ($id != 0) { ?>
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                <td class="CR"><label for="mrbsroomchange"><b><?php print_string('roomchange', 'block_mrbs'); ?></b></td>
+                <td><input type="checkbox" checked="checked" name="roomchange" id="mrbsroomchange" /></td>
+                </tr>
+        <?php } ?>
 
 <TR>
  <TD colspan=2 align=center>
   <SCRIPT LANGUAGE="JavaScript">
-      document.writeln('<INPUT TYPE="button" NAME="save_button" VALUE="<?php echo get_string('savechanges') ?>" ONCLICK="validate_and_submit()">');
-      window.onload = updateFreeRooms();
-                              </SCRIPT>
+                    document.writeln('<INPUT TYPE="button" NAME="save_button" VALUE="<?php echo get_string('savechanges') ?>" ONCLICK="validate_and_submit()">');
+                    window.onload = updateFreeRooms();
+                                                          </SCRIPT>
   <NOSCRIPT>
    <INPUT TYPE="submit" VALUE="<?php echo get_string('savechanges') ?>">
   </NOSCRIPT>
@@ -640,15 +642,15 @@ if (has_capability("block/mrbs:forcebook", $context)) {
  </TD></TR>
 </TABLE>
 
-<!--<INPUT TYPE=HIDDEN NAME="returl"    VALUE="<?php echo $HTTP_REFERER ?>">-->
-<!--INPUT TYPE=HIDDEN NAME="room_id"   VALUE="<?php echo $room_id ?>"-->
+<INPUT TYPE=HIDDEN NAME="returl" VALUE="<?php echo $HTTP_REFERER ?>">
+<INPUT TYPE=HIDDEN NAME="room_id" VALUE="<?php echo $room_id ?>">
 <INPUT TYPE=HIDDEN NAME="create_by" VALUE="<?php echo $create_by ?>">
 <INPUT TYPE=HIDDEN NAME="rep_id"    VALUE="<?php echo $rep_id ?>">
 <INPUT TYPE=HIDDEN NAME="edit_type" VALUE="<?php echo $edit_type ?>">
-<?php
-if (isset($id))
-    echo "<INPUT TYPE=HIDDEN NAME=\"id\"        VALUE=\"$id\">\n";
-?>
+    <?php
+    if (isset($id))
+        echo "<INPUT TYPE=HIDDEN NAME=\"id\" VALUE=\"$id\">\n";
+    ?>
 
 </FORM>
 

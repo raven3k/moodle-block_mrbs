@@ -129,7 +129,7 @@ if (($day == 0) or ( $month == 0) or ( $year == 0)) {
                                                 }
                                                 ?>
                             </TD></TR>
-<?php } else { ?>
+                    <?php } else { ?>
                         <TR><TD CLASS=CR><B><?php echo get_string('period', 'block_mrbs') ?></B></TD>
                             <TD CLASS=CL>
                                 <SELECT NAME="period" onChange="RoomSearch()">
@@ -146,7 +146,7 @@ if (($day == 0) or ( $month == 0) or ( $year == 0)) {
                             </TD></TR>
 
                         <!-- Duration selectors -->
-<?php } ?>
+                    <?php } ?>
                     <TR><TD CLASS=CR><B><?php echo get_string('duration', 'block_mrbs'); ?></B></TD>
                         <TD CLASS=CL><INPUT NAME="duration" SIZE=7 VALUE="<?php echo $duration; ?>" onChange="RoomSearch()" onKeyUp="RoomSearch()">
                             <SELECT NAME="dur_units" onChange="RoomSearch()">
@@ -198,7 +198,7 @@ if (($day == 0) or ( $month == 0) or ( $year == 0)) {
 
         <!-- Area to display rooms found -->
         <h2 id="results"></h2>
-<?php echo'<table border=1 ><thead><tr><th>' . get_string('area', 'block_mrbs') . '</th><th>Room</th><th>' . get_string('description') . '</th><th>' . get_string('capacity', 'block_mrbs') . '</th></tr></thead><tbody id="rooms"></tbody></table>'; ?>
+        <?php echo'<table border=1 ><thead><tr><th>' . get_string('area', 'block_mrbs') . '</th><th>Room</th><th>' . get_string('description') . '</th><th>' . get_string('capacity', 'block_mrbs') . '</th></tr></thead><tbody id="rooms"></tbody></table>'; ?>
 
 
         <SCRIPT LANGUAGE="JavaScript">

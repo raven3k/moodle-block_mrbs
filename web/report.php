@@ -479,23 +479,23 @@ if ($pview != 1) {
             <tr><td class="CR"><?php echo get_string('sort_rep', 'block_mrbs'); ?></td>
                 <td class="CL">
                     <input type="radio" name="sortby" value="r"<?php
-                if ($sortby == "r")
-                    echo " checked";
-                echo ">" . get_string('room', 'block_mrbs');
-                           ?>
+                    if ($sortby == "r")
+                        echo " checked";
+                    echo ">" . get_string('room', 'block_mrbs');
+                    ?>
                            <input type="radio" name="sortby" value="s"<?php
-                       if ($sortby == "s")
-                           echo " checked";
-                       echo ">" . get_string('sort_rep_time', 'block_mrbs');
+                           if ($sortby == "s")
+                               echo " checked";
+                           echo ">" . get_string('sort_rep_time', 'block_mrbs');
                            ?>
                 </td></tr>
             <tr><td class="CR"><?php echo get_string('rep_dsp', 'block_mrbs'); ?></td>
                 <td class="CL">
                     <input type="radio" name="display" value="d"<?php
-                           if ($display == "d")
-                               echo " checked";
-                           echo ">" . get_string('rep_dsp_dur', 'block_mrbs');
-                           ?>
+                    if ($display == "d")
+                        echo " checked";
+                    echo ">" . get_string('rep_dsp_dur', 'block_mrbs');
+                    ?>
                            <input type="radio" name="display" value="e"<?php
                            if ($display == "e")
                                echo " checked";
@@ -505,14 +505,14 @@ if ($pview != 1) {
             <tr><td class="CR"><?php echo get_string('summarize_by', 'block_mrbs'); ?></td>
                 <td class="CL">
                     <input type="radio" name="sumby" value="d"<?php
-                       if ($sumby == "d")
-                           echo " checked";
-                       echo ">" . get_string('sum_by_descrip', 'block_mrbs');
-                       ?>
+                    if ($sumby == "d")
+                        echo " checked";
+                    echo ">" . get_string('sum_by_descrip', 'block_mrbs');
+                    ?>
                            <input type="radio" name="sumby" value="c"<?php
-                       if ($sumby == "c")
-                           echo " checked";
-                       echo ">" . get_string('sum_by_creator', 'block_mrbs');
+                           if ($sumby == "c")
+                               echo " checked";
+                           echo ">" . get_string('sum_by_creator', 'block_mrbs');
                            ?>
                 </td></tr>
             <tr><td>&nbsp;</td><td><?php print_string('help_wildcard', 'block_mrbs'); ?></td></tr>
